@@ -41,7 +41,7 @@ public class RequestDaoImpl implements RequestDao {
 
 	@Override
 	public List<Request> selectAllRequests() {
-		String sql = "SELECT * FROM \"EmployeeReimbursementSystem\".request";
+		String sql = "SELECT * FROM \"EmployeeReimbursementSystem\".request ORDER BY request_id ASC";
 		Connection connection = ConnectionFactory.getConnection();
 		List<Request> requests = new ArrayList<>();
 		try(PreparedStatement ps = connection.prepareStatement(sql)){
@@ -64,7 +64,7 @@ public class RequestDaoImpl implements RequestDao {
 
 	@Override
 	public List<Request> selectRequestsByUserID(int id) {
-		String sql = "SELECT * FROM \"EmployeeReimbursementSystem\".request WHERE user_id=?";
+		String sql = "SELECT * FROM \"EmployeeReimbursementSystem\".request WHERE user_id=? ORDER BY request_id ASC";
 		Connection connection = ConnectionFactory.getConnection();
 		List<Request> requests = new ArrayList<>();
 		try(PreparedStatement ps = connection.prepareStatement(sql)){
@@ -90,7 +90,7 @@ public class RequestDaoImpl implements RequestDao {
 
 	@Override
 	public List<Request> selectRequestsByStatus(String status) {
-		String sql = "SELECT * FROM \"EmployeeReimbursementSystem\".request WHERE status=?";
+		String sql = "SELECT * FROM \"EmployeeReimbursementSystem\".request WHERE status=? ORDER BY request_id ASC";
 		Connection connection = ConnectionFactory.getConnection();
 		List<Request> requests = new ArrayList<>();
 		try(PreparedStatement ps = connection.prepareStatement(sql)){
@@ -116,7 +116,7 @@ public class RequestDaoImpl implements RequestDao {
 
 	@Override
 	public List<Request> selectRequestsByDate(String date) {
-		String sql = "SELECT * FROM \"EmployeeReimbursementSystem\".request WHERE date_created=?";
+		String sql = "SELECT * FROM \"EmployeeReimbursementSystem\".request WHERE date_created=? ORDER BY request_id ASC";
 		Connection connection = ConnectionFactory.getConnection();
 		List<Request> requests = new ArrayList<>();
 
@@ -143,7 +143,7 @@ public class RequestDaoImpl implements RequestDao {
 
 	@Override
 	public List<Request> selectRequestsByDate(String dateRangeBegin, String dateRangeEnd) {
-		String sql = "SELECT * FROM \"EmployeeReimbursementSystem\".request WHERE date_created>=? AND date_created<=?";
+		String sql = "SELECT * FROM \"EmployeeReimbursementSystem\".request WHERE date_created>=? AND date_created<=? ORDER BY request_id ASC";
 		Connection connection = ConnectionFactory.getConnection();
 		List<Request> requests = new ArrayList<>();
 
@@ -195,7 +195,7 @@ public class RequestDaoImpl implements RequestDao {
 
 	@Override
 	public void updateRequest(Request r) {
-		String sql = "UPDATE \"EmployeeReimbursementSystem\".request SET (user_id, type, status, date, amount) = (?, ?, ?, ?, ?, ?) WHERE request_id=?";
+		String sql = "UPDATE \"EmployeeReimbursementSystem\".request SET (user_id, type, status, date_created, amount, date_processed) = (?, ?, ?, ?, ?, ?) WHERE request_id=?";
 		Connection connection = ConnectionFactory.getConnection();
 		Date now = new Date(System.currentTimeMillis());
 		try (PreparedStatement ps = connection.prepareStatement(sql)){
@@ -207,7 +207,7 @@ public class RequestDaoImpl implements RequestDao {
 			ps.setDouble(5,r.getAmount());
 			ps.setDate(6, now);
 			ps.setInt(7,r.getRequestID());
-			ps.executeQuery();
+			ps.executeUpdate();
 		}catch(SQLException | java.text.ParseException e){
 			e.printStackTrace();
 		}			

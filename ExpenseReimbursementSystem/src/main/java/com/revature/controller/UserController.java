@@ -23,16 +23,35 @@ public class UserController {
 		}
 	}
 	
-	public void getUserByID(Context ctx) {
-		User selectedUser = ersService.getUserByID(Integer.parseInt(ctx.pathParam("id")));
+	public void getMyUser(Context ctx) {
+		User selectedUser = null;
+		selectedUser = ersService.getUserByID(ctx.cookieStore("userID"));
 		if(selectedUser != null)
 			ctx.json(selectedUser);
 		else
 			ctx.result("User does not exist");
 	}
+	public void getUserByID(Context ctx) {
+		User selectedUser = null;
+		try {
+			if(ctx.cookieStore("manager").equals(true))
+				selectedUser = ersService.getUserByID(Integer.parseInt(ctx.pathParam("id")));
+			else
+				selectedUser = ersService.getUserByID(ctx.cookieStore("userID"));
+			if(selectedUser != null)
+				ctx.json(selectedUser);
+			else
+				ctx.result("User does not exist");
+
+		}catch(NumberFormatException e) {
+			//e.printStackTrace();
+			getUserByUsername(ctx);
+			throw e;
+		}
+	}
 
 	public void getUserByUsername(Context ctx) {
-		User selectedUser = ersService.getUserByUsername(ctx.pathParam("username"));
+		User selectedUser = ersService.getUserByUsername(ctx.pathParam("id"));
 		if(selectedUser != null)
 			ctx.json(selectedUser);
 		else

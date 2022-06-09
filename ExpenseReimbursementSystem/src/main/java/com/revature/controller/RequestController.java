@@ -25,8 +25,12 @@ public class RequestController {
 	}
 
 	public void getRequestsByUserID(Context ctx) {
+		int id = -1;
 		try{
-			int id = Integer.parseInt(ctx.pathParam("userID"));
+			if(ctx.cookieStore("manager").equals(true))
+				id = Integer.parseInt(ctx.pathParam("userID"));
+			else
+				id = ctx.cookieStore("userID");
 			List<Request> requestList = ersService.getRequestsByUserID(id);
 			ctx.json(requestList);
 		}catch(NumberFormatException e){
@@ -37,22 +41,28 @@ public class RequestController {
 	
 	public void getRequestsByStatus(Context ctx) {
 		List<Request> requestList = ersService.getRequestsByStatus(ctx.pathParam("status"));
+		if(ctx.cookieStore("manager").equals(false))
+			requestList.removeIf(r -> (!ctx.cookieStore("userID").equals(r.getUserID())));
 		ctx.json(requestList);
 	}
 	
 	public void getRequestsByDate(Context ctx){
 		List<Request> requestList = ersService.getRequestsByDate(ctx.pathParam("date"));
+		if(ctx.cookieStore("manager").equals(false))
+			requestList.removeIf(r -> (!ctx.cookieStore("userID").equals(r.getUserID())));
 		ctx.json(requestList);
 	}
 	
 	public void getRequestsBetweenDates(Context ctx){
 		List<Request> requestList = ersService.getRequestsByDate(ctx.pathParam("startDate"), ctx.pathParam("endDate"));
+		if(ctx.cookieStore("manager").equals(false))
+			requestList.removeIf(r -> (!ctx.cookieStore("userID").equals(r.getUserID())));
 		ctx.json(requestList);
 	}
 	
 	public void createRequest(Context ctx) {
 		Request jsonRequest = ctx.bodyAsClass(Request.class);
-		
+		jsonRequest.setUserID(ctx.cookieStore("userID"));
 		if(ersService.createRequest(jsonRequest)) {
 			ctx.status(201);
 		}else {
@@ -63,9 +73,13 @@ public class RequestController {
 	
 	public void updateRequest(Context ctx) {
 		Request jsonRequest = ctx.bodyAsClass(Request.class);
-		
-		ersService.updateRequest(jsonRequest);
+		if(jsonRequest.getStatus().equals("approved") || jsonRequest.getStatus().equals("denied")) {
+			ersService.updateRequest(jsonRequest);
 			ctx.status(201);
+		}else {
+			ctx.html("The request must be approved or denied");
+			ctx.status(418);
+		}
 	}
 
 }

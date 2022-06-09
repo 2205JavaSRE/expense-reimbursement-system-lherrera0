@@ -61,7 +61,7 @@ public class UserDaoImpl implements UserDao {
 
 	@Override
 	public List<User> selectAllUsers() {
-		String sql = "SELECT * FROM \"EmployeeReimbursementSystem\".\"user\"";
+		String sql = "SELECT * FROM \"EmployeeReimbursementSystem\".\"user\" ORDER BY user_id ASC";
 		Connection connection = ConnectionFactory.getConnection();
 		List<User> selectedUsers = new ArrayList<>();
 		try(PreparedStatement ps = connection.prepareStatement(sql)){
@@ -116,7 +116,7 @@ public class UserDaoImpl implements UserDao {
 			ps.setString(4, u.getFirstName());
 			ps.setString(5, u.getLastName());
 			ps.setInt(6, u.getUserID());
-			ps.executeQuery();
+			ps.executeUpdate();
 		}catch(SQLException e) {
 			e.printStackTrace();
 		}
