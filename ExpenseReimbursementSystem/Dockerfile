@@ -6,6 +6,6 @@ RUN mvn clean package
 
 FROM openjdk:8-jre
 
-COPY --from=MAVEN_BUILD_STAGE /target/ExpenseReimbursementSystem-0.0.1-SNAPSHOT.jar /ERS-API.jar
+COPY --from=MAVEN_BUILD_STAGE /target/ExpenseReimbursementSystem-0.0.1-SNAPSHOT-shaded.jar /ERS-API.jar
 
 CMD ["java","-jar","/ERS-API.jar"]
