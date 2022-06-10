@@ -11,5 +11,5 @@ scrape_configs:
   - job_name: 'ers-api'
     metrics_path: '/metrics' #Looks for this endpoint for all the metrics
     static_configs:
-      - targets: ['app:7400'] #Referencing the name of the docker service in the compose file
+      - targets: ['app:7500'] #Referencing the name of the docker service in the compose file
         #Because docker compose creates a bridge network, they can reference each other!
