@@ -9,17 +9,19 @@ public class UserController {
 
 	private ERSServices ersService = new ERSServices();
 	
-	public void login(Context ctx) {
+	public boolean login(Context ctx) {
 		if(ersService.login(ctx.formParam("username"), ctx.formParam("password"))) {
 			User selectedUser = ersService.getUserByUsername(ctx.formParam("username"));
 			ctx.cookieStore("access", true);
 			ctx.cookieStore("userID", selectedUser.getUserID());
 			ctx.cookieStore("manager", selectedUser.isManager());
-			ctx.html("You are logged in");
+			ctx.result("You are logged in");
 			ctx.status(201);
+			return true;
 		}else {
-			ctx.html("those credentials are invalid");
+			ctx.result("those credentials are invalid");
 			ctx.status(401);
+			return false;
 		}
 	}
 	
@@ -70,6 +72,7 @@ public class UserController {
 		User jsonUser = ctx.bodyAsClass(User.class);
 		
 		if(ersService.createUser(jsonUser)) {
+			ctx.result("User was created");
 			ctx.status(201);
 		}else {
 			ctx.status(418);
@@ -80,6 +83,7 @@ public class UserController {
 		User jsonUser = ctx.bodyAsClass(User.class);
 		
 		ersService.updateUser(jsonUser);
+		ctx.result("User was updated");
 		ctx.status(201);
 	}
 }

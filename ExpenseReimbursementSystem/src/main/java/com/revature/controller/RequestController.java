@@ -64,6 +64,7 @@ public class RequestController {
 		Request jsonRequest = ctx.bodyAsClass(Request.class);
 		jsonRequest.setUserID(ctx.cookieStore("userID"));
 		if(ersService.createRequest(jsonRequest)) {
+			ctx.result("Request submitted for approval");
 			ctx.status(201);
 		}else {
 			ctx.status(418);
@@ -71,14 +72,17 @@ public class RequestController {
 		
 	}
 	
-	public void updateRequest(Context ctx) {
+	public boolean updateRequest(Context ctx) {
 		Request jsonRequest = ctx.bodyAsClass(Request.class);
 		if(jsonRequest.getStatus().equals("approved") || jsonRequest.getStatus().equals("denied")) {
 			ersService.updateRequest(jsonRequest);
+			ctx.result("Request updated");
 			ctx.status(201);
+			return jsonRequest.getStatus().equals("approved");
 		}else {
-			ctx.html("The request must be approved or denied");
+			ctx.result("The request must be approved or denied");
 			ctx.status(418);
+			return false;
 		}
 	}
 
