@@ -1,0 +1,10 @@
+services:
+  ers-api:
+    image: 'lherrera0/ers-api'
+    container_name: ers-api
+    ports:
+      - 8080:7500
+    environment:
+      - db_url=jdbc:postgresql://database-1.c7jfv3zcy9rz.us-west-1.rds.amazonaws.com:5432/postgres
+      - db_user=java_login
+      - db_password=s3cur3m3
