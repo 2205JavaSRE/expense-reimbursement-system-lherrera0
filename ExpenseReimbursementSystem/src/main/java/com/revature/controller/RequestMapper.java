@@ -85,6 +85,13 @@ public class RequestMapper {
 				ctx.result("You dont have access");
 		});
 
+		app.get("/api/user/all", ctx -> {
+			if(ctx.cookieStore("access") != null && ctx.cookieStore("access").equals(true) && ctx.cookieStore("manager").equals(true))
+				userController.getAllUsers(ctx);
+			else
+				ctx.result("You dont have access");
+		});
+		
 		app.get("/api/user/{id}", ctx -> {
 			if(ctx.cookieStore("access") != null && ctx.cookieStore("access").equals(true) && ctx.cookieStore("manager").equals(true)) 
 				userController.getUserByID(ctx);
@@ -92,35 +99,21 @@ public class RequestMapper {
 				ctx.result("You dont have access");
 		});
 
-		app.get("/api/users", ctx -> {
-			if(ctx.cookieStore("access") != null && ctx.cookieStore("access").equals(true) && ctx.cookieStore("manager").equals(true))
-				userController.getAllUsers(ctx);
-			else
-				ctx.result("You dont have access");
-		});
-		
-		app.post("/api/user-create", ctx -> {
+		app.post("/api/user/create", ctx -> {
 			if(ctx.cookieStore("access") != null && ctx.cookieStore("access").equals(true) && ctx.cookieStore("manager").equals(true))
 				userController.createUser(ctx);
 			else
 				ctx.result("You dont have access");
 		});	
 		
-		app.post("/api/user-update", ctx -> {
+		app.post("/api/user/update", ctx -> {
 			if(ctx.cookieStore("access") != null && ctx.cookieStore("access").equals(true) && ctx.cookieStore("manager").equals(true))
 				userController.updateUser(ctx);
 			else
 				ctx.result("You dont have access");
 		});	
 		
-		app.get("/api/request/{id}", ctx -> {
-			if(ctx.cookieStore("access") != null && ctx.cookieStore("access").equals(true) && ctx.cookieStore("manager").equals(true))
-				requestController.getRequestByID(ctx);
-			else
-				ctx.result("You dont have access");
-		});
-
-		app.get("/api/requests", ctx ->{
+		app.get("/api/request/all", ctx ->{
 			if(ctx.cookieStore("access") != null && ctx.cookieStore("access").equals(true) && ctx.cookieStore("manager").equals(true))
 				requestController.getAllRequests(ctx);
 			else if (ctx.cookieStore("access") != null && ctx.cookieStore("access").equals(true))
@@ -129,21 +122,28 @@ public class RequestMapper {
 				ctx.result("You dont have access");
 		});
 		
-		app.get("/api/requests-by-userID/{userID}", ctx -> {
+		app.get("/api/request/{id}", ctx -> {
+			if(ctx.cookieStore("access") != null && ctx.cookieStore("access").equals(true) && ctx.cookieStore("manager").equals(true))
+				requestController.getRequestByID(ctx);
+			else
+				ctx.result("You dont have access");
+		});
+
+		app.get("/api/request/userID/{userID}", ctx -> {
 			if(ctx.cookieStore("access") != null && ctx.cookieStore("access").equals(true) && ctx.cookieStore("manager").equals(true))
 				requestController.getRequestsByUserID(ctx);
 			else
 				ctx.result("You dont have access");
 		});
 		
-		app.get("/api/requests-by-status/{status}", ctx -> {
+		app.get("/api/request/status/{status}", ctx -> {
 			if(ctx.cookieStore("access") != null && ctx.cookieStore("access").equals(true))
 				requestController.getRequestsByStatus(ctx);
 			else
 				ctx.result("You dont have access");
 		});
 		
-		app.get("/api/requests-by-date/{date}", ctx -> {
+		app.get("/api/request/date/{date}", ctx -> {
 			if(ctx.cookieStore("access") != null && ctx.cookieStore("access").equals(true)) {
 				ctx.result("Enter your date in yyyy-MM-dd format");
 				requestController.getRequestsByDate(ctx);
@@ -151,7 +151,7 @@ public class RequestMapper {
 				ctx.result("You dont have access");
 		});
 		
-		app.get("/api/requests-between-dates/{startDate}/{endDate}", ctx -> {
+		app.get("/api/request/date/{startDate}/{endDate}", ctx -> {
 			if(ctx.cookieStore("access") != null && ctx.cookieStore("access").equals(true)) {
 				ctx.result("Enter your dates in yyyy-MM-dd format");
 				requestController.getRequestsBetweenDates(ctx);
@@ -160,7 +160,7 @@ public class RequestMapper {
 
 		});
 		
-		app.get("/api/request-create", ctx -> {
+		app.get("/api/request/create", ctx -> {
 			if(ctx.cookieStore("access") != null && ctx.cookieStore("access").equals(true))
 				ctx.result("Enter your request in the following format\n"
 						+ "requestID (use 0)\n"
@@ -174,14 +174,14 @@ public class RequestMapper {
 				ctx.result("You dont have access");
 		});	
 		
-		app.post("/api/request-create", ctx -> {
+		app.post("/api/request/create", ctx -> {
 			if(ctx.cookieStore("access") != null && ctx.cookieStore("access").equals(true))
 				requestController.createRequest(ctx);
 			else
 				ctx.result("You dont have access");
 		});	
 		
-		app.get("/api/request-update", ctx -> {
+		app.get("/api/request/update", ctx -> {
 			if(ctx.cookieStore("access") != null && ctx.cookieStore("access").equals(true) && ctx.cookieStore("manager").equals(true)) {
 				ctx.result("Enter your request in the following format\n"
 						+ "requestID\n"
@@ -195,7 +195,7 @@ public class RequestMapper {
 				ctx.result("You dont have access");
 		});	
 
-		app.post("/api/request-update", ctx -> {
+		app.post("/api/request/update", ctx -> {
 			if(ctx.cookieStore("access") != null && ctx.cookieStore("access").equals(true) && ctx.cookieStore("manager").equals(true)) {
 				Double total = ctx.bodyAsClass(Request.class).getAmount();
 				if(requestController.updateRequest(ctx))
